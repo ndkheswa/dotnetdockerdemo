@@ -1,0 +1,23 @@
+version: '3.4'
+
+services:
+  sql.data:
+    image: ${DOCKER_REGISTRY-}mssql-linux 
+    build:
+      context: .
+      dockerfile: ./Database/Dockerfile
+    ports:
+      - "5433:1433"
+    container_name: mssql-linux
+    env_file: .env
+
+  worldwideimporters:
+    image: ${DOCKER_REGISTRY-}worldwideimporters
+    build:
+      context: .
+      dockerfile: ./WorldWideImporters/Dockerfile
+    ports:
+      - "8081:80"
+    container_name: worldwideimporters.api
+    depends_on:
+      - sql.data

@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  worldwideimporters:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "80"

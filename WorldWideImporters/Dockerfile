@@ -1,0 +1,21 @@
+FROM microsoft/dotnet:2.1-aspnetcore-runtime AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM microsoft/dotnet:2.1-sdk AS build
+WORKDIR /src
+COPY WorldWideImporters/WorldWideImporters.csproj WorldWideImporters/
+COPY WorldWideImporters/Nuget.Config WorldWideImporters/
+RUN dotnet restore WorldWideImporters/WorldWideImporters.csproj --configfile WorldWideImporters/Nuget.Config
+# Apply migrations using the SDK
+COPY . .
+WORKDIR /src/WorldWideImporters
+RUN dotnet build WorldWideImporters.csproj -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish WorldWideImporters.csproj -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENTRYPOINT ["dotnet", "WorldWideImporters.dll"]
